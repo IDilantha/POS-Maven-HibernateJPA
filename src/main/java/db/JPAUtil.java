@@ -13,6 +13,8 @@ import org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
@@ -24,9 +26,9 @@ public class JPAUtil {
     private static String port;
     private static String ip;
 
-    private static SessionFactory sessionFactory = buildSessionFactory();
+    private static EntityManagerFactory entityManagerFactory = buildEntityManagerFactory();
 
-    private static SessionFactory buildSessionFactory() {
+    private static EntityManagerFactory buildEntityManagerFactory() {
         File file = new File("src/main/resources/application.properties");
         Properties properties = new Properties();
 
@@ -41,27 +43,12 @@ public class JPAUtil {
         port = properties.getProperty("pos.port");
         ip = properties.getProperty("pos.ip");
 
-        StandardServiceRegistry standardRegistry = new StandardServiceRegistryBuilder()
-                .loadProperties(file)
-                .applySetting("hibernate.connection.username", username)
-                .applySetting("hibernate.connection.password", password)
-                .build();
-
-        Metadata metadata = new MetadataSources( standardRegistry )
-                .addAnnotatedClass(Customer.class)
-                .addAnnotatedClass(Item.class)
-                .addAnnotatedClass(Order.class)
-                .addAnnotatedClass(OrderDetail.class)
-                .getMetadataBuilder()
-                .applyImplicitNamingStrategy( ImplicitNamingStrategyJpaCompliantImpl.INSTANCE )
-                .build();
-
-        return metadata.getSessionFactoryBuilder()
-                .build();
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("POS-HibernateJPA", properties);
+        return entityManagerFactory;
     }
 
-    public static SessionFactory getSessionFactory(){
-        return sessionFactory;
+    public static EntityManagerFactory getEntityManagerFactory(){
+        return entityManagerFactory;
     }
 
     public static String getUsername() {
