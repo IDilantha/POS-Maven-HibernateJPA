@@ -1,18 +1,9 @@
 package db;
 
-import entity.Customer;
-import entity.Item;
-import entity.Order;
-import entity.OrderDetail;
+
+
 import javafx.scene.control.Alert;
 import lk.ijse.dep.crypto.DEPCrypt;
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.Metadata;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.io.File;
@@ -37,11 +28,14 @@ public class JPAUtil {
         }catch(Exception e){
             new Alert(Alert.AlertType.ERROR,"FIS EKE AULA");
         }
-        username = DEPCrypt.decode(properties.getProperty("hibernate.connection.username"),"123");
-        password = DEPCrypt.decode(properties.getProperty("hibernate.connection.password"),"123");
+        username = DEPCrypt.decode(properties.getProperty("javax.persistence.jdbc.user"),"123");
+        password = DEPCrypt.decode(properties.getProperty("javax.persistence.jdbc.password"),"123");
         db = properties.getProperty("pos.db");
         port = properties.getProperty("pos.port");
         ip = properties.getProperty("pos.ip");
+
+        properties.setProperty("javax.persistence.jdbc.user",username);
+        properties.setProperty("javax.persistence.jdbc.password",password);
 
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("POS-HibernateJPA", properties);
         return entityManagerFactory;
