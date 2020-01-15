@@ -9,8 +9,8 @@ import db.JPAUtil;
 import dto.CustomerDTO;
 import entity.Customer;
 import javafx.scene.control.Alert;
-import org.hibernate.Session;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,95 +21,99 @@ public class CustomerBOImpl implements CustomerBO {
 
     @Override
     public void saveCustomer(CustomerDTO customer) throws Exception {
-        try (Session session = JPAUtil.getSessionFactory().openSession()) {
-            customerDAO.setSession(session);
-            session.beginTransaction();
-            customerDAO.save(new Customer(customer.getId(), customer.getName(), customer.getAddress()));
-            session.getTransaction().commit();
-        }
-
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+        customerDAO.setEntityManager(entityManager);
+        entityManager.getTransaction().begin();
+        customerDAO.save(new Customer(customer.getId(), customer.getName(), customer.getAddress()));
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
 
     @Override
     public void updateCustomer(CustomerDTO customer) throws Exception {
-        try (Session session = JPAUtil.getSessionFactory().openSession()) {
-            customerDAO.setSession(session);
-            session.beginTransaction();
-            customerDAO.update(new Customer(customer.getId(), customer.getName(), customer.getAddress()));
-            session.getTransaction().commit();
-        }
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+        customerDAO.setEntityManager(entityManager);
+        entityManager.getTransaction().begin();
+        customerDAO.update(new Customer(customer.getId(), customer.getName(), customer.getAddress()));
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
 
     @Override
     public void deleteCustomer(String customerId) throws Exception {
-        try (Session session = JPAUtil.getSessionFactory().openSession()) {
-            customerDAO.setSession(session);
-            orderDAO.setSession(session);
-            session.beginTransaction();
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+        customerDAO.setEntityManager(entityManager);
+        orderDAO.setEntityManager(entityManager);
+        entityManager.getTransaction().begin();
 
-            if (orderDAO.existsByCustomerId(customerId)) {
-                new Alert(Alert.AlertType.ERROR,"Customer Already exist in an order , Unable to Delete");
-                return;
-            }
-            customerDAO.delete(customerId);
-            session.getTransaction().commit();
+        if (orderDAO.existsByCustomerId(customerId)) {
+            new Alert(Alert.AlertType.ERROR, "Customer Already exist in an order , Unable to Delete");
+            return;
         }
+        customerDAO.delete(customerId);
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
 
     }
 
     @Override
     public List<CustomerDTO> findAllCustomers() throws Exception {
-        try (Session session = JPAUtil.getSessionFactory().openSession()) {
-            customerDAO.setSession(session);
-            session.beginTransaction();
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+        customerDAO.setEntityManager(entityManager);
+        entityManager.getTransaction().begin();
 
-            List<Customer> alCustomers = customerDAO.findAll();
-            List<CustomerDTO> dtos = new ArrayList<>();
-            for (Customer customer : alCustomers) {
-                dtos.add(new CustomerDTO(customer.getCustomerId(), customer.getName(), customer.getAddress()));
-            }
-            session.getTransaction().commit();
-            return dtos;
+        List<Customer> alCustomers = customerDAO.findAll();
+        List<CustomerDTO> dtos = new ArrayList<>();
+        for (Customer customer : alCustomers) {
+            dtos.add(new CustomerDTO(customer.getCustomerId(), customer.getName(), customer.getAddress()));
         }
+        entityManager.getTransaction().commit();
+        entityManager.close();
+        return dtos;
+
     }
 
     @Override
     public String getLastCustomerId() throws Exception {
-        try (Session session = JPAUtil.getSessionFactory().openSession()) {
-            customerDAO.setSession(session);
-            session.beginTransaction();
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+        customerDAO.setEntityManager(entityManager);
+        entityManager.getTransaction().begin();
 
-            String lastCustomerId = customerDAO.getLastCustomerId();
-            session.getTransaction().commit();
-            return lastCustomerId;
-        }
+        String lastCustomerId = customerDAO.getLastCustomerId();
+        entityManager.getTransaction().commit();
+        entityManager.close();
+        return lastCustomerId;
+
+
     }
 
     @Override
     public CustomerDTO findCustomer(String customerId) throws Exception {
-        try (Session session = JPAUtil.getSessionFactory().openSession()) {
-            customerDAO.setSession(session);
-            session.beginTransaction();
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+        customerDAO.setEntityManager(entityManager);
+        entityManager.getTransaction().begin();
 
-            Customer customer = customerDAO.find(customerId);
-            session.getTransaction().commit();
-            return new CustomerDTO(customer.getCustomerId(), customer.getName(), customer.getAddress());
-        }
+        Customer customer = customerDAO.find(customerId);
+        entityManager.getTransaction().commit();
+        entityManager.close();
+        return new CustomerDTO(customer.getCustomerId(), customer.getName(), customer.getAddress());
+
     }
 
     @Override
     public List<String> getAllCustomerIDs() throws Exception {
-        try (Session session = JPAUtil.getSessionFactory().openSession()) {
-            customerDAO.setSession(session);
-            session.beginTransaction();
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+        customerDAO.setEntityManager(entityManager);
+        entityManager.getTransaction().begin();
 
-            List<Customer> customers = customerDAO.findAll();
-            List<String> ids = new ArrayList<>();
-            for (Customer customer : customers) {
-                ids.add(customer.getCustomerId());
-            }
-            session.getTransaction().commit();
-            return ids;
+        List<Customer> customers = customerDAO.findAll();
+        List<String> ids = new ArrayList<>();
+        for (Customer customer : customers) {
+            ids.add(customer.getCustomerId());
         }
+        entityManager.getTransaction().commit();
+        entityManager.close();
+        return ids;
     }
 }
