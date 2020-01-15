@@ -1,7 +1,7 @@
 package controller;
 
 import com.jfoenix.controls.JFXProgressBar;
-import db.HibernateUtil;
+import db.JPAUtil;
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
@@ -159,10 +159,10 @@ public class MainFormController implements Initializable {
 
         if (file != null) {
             String[] commands;
-            if (HibernateUtil.getPassword().length() > 0) {
-                commands = new String[]{"mysql", "-h", HibernateUtil.getIp(), "--port",HibernateUtil.getPort(), "-u", HibernateUtil.getUsername(), "-p" + HibernateUtil.getPassword(), HibernateUtil.getDb(), "-e", "source " + file.getAbsolutePath()};
+            if (JPAUtil.getPassword().length() > 0) {
+                commands = new String[]{"mysql", "-h", JPAUtil.getIp(), "--port", JPAUtil.getPort(), "-u", JPAUtil.getUsername(), "-p" + JPAUtil.getPassword(), JPAUtil.getDb(), "-e", "source " + file.getAbsolutePath()};
             } else {
-                commands = new String[]{"mysql", "-h", HibernateUtil.getIp(), "--port", HibernateUtil.getPort(), "-u", HibernateUtil.getUsername(), HibernateUtil.getDb(), "-e", "source " + file.getAbsolutePath()};
+                commands = new String[]{"mysql", "-h", JPAUtil.getIp(), "--port", JPAUtil.getPort(), "-u", JPAUtil.getUsername(), JPAUtil.getDb(), "-e", "source " + file.getAbsolutePath()};
             }
             this.root.getScene().setCursor(Cursor.WAIT);
             pgb.setVisible(true);
@@ -207,8 +207,8 @@ public class MainFormController implements Initializable {
         if (file != null) {
             Process process = null;
             try {
-                process = Runtime.getRuntime().exec("mysqldump -h" + HibernateUtil.getIp() + " -u" + HibernateUtil.getUsername() + " -p"
-                        + HibernateUtil.getPassword() + " " + HibernateUtil.getDb() + " --result-file "
+                process = Runtime.getRuntime().exec("mysqldump -h" + JPAUtil.getIp() + " -u" + JPAUtil.getUsername() + " -p"
+                        + JPAUtil.getPassword() + " " + JPAUtil.getDb() + " --result-file "
                         + file.getAbsolutePath() + (file.getAbsolutePath().endsWith(".sql") ? "" : ".sql"));
                 int exitCode = process.waitFor();
                 pgb.setVisible(true);

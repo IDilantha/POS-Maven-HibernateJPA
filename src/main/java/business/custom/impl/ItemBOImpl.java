@@ -1,12 +1,11 @@
 package business.custom.impl;
 
 import business.custom.ItemBO;
-import business.exception.AlreadyExistsInOrderException;
 import dao.DAOFactory;
 import dao.DAOTypes;
 import dao.custom.ItemDAO;
 import dao.custom.OrderDetailDAO;
-import db.HibernateUtil;
+import db.JPAUtil;
 import dto.ItemDTO;
 import entity.Item;
 import javafx.scene.control.Alert;
@@ -23,7 +22,7 @@ public class ItemBOImpl implements ItemBO {
 
     @Override
     public void saveItem(ItemDTO item) throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             itemDAO.setSession(session);
             session.beginTransaction();
 
@@ -35,7 +34,7 @@ public class ItemBOImpl implements ItemBO {
 
     @Override
     public void updateItem(ItemDTO item) throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             itemDAO.setSession(session);
             itemDAO.update(new Item(item.getCode(),
                     item.getDescription(), item.getUnitPrice(), item.getQtyOnHand()));
@@ -45,7 +44,7 @@ public class ItemBOImpl implements ItemBO {
 
     @Override
     public void deleteItem(String itemCode) throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             itemDAO.setSession(session);
             orderDetailDAO.setSession(session);
             session.beginTransaction();
@@ -60,7 +59,7 @@ public class ItemBOImpl implements ItemBO {
 
     @Override
     public List<ItemDTO> findAllItems() throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             itemDAO.setSession(session);
             session.beginTransaction();
 
@@ -79,7 +78,7 @@ public class ItemBOImpl implements ItemBO {
 
     @Override
     public String getLastItemCode() throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             itemDAO.setSession(session);
             session.beginTransaction();
             String lastItemCode = itemDAO.getLastItemCode();
@@ -90,7 +89,7 @@ public class ItemBOImpl implements ItemBO {
 
     @Override
     public ItemDTO findItem(String itemCode) throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             itemDAO.setSession(session);
             session.beginTransaction();
 
@@ -102,7 +101,7 @@ public class ItemBOImpl implements ItemBO {
 
     @Override
     public List<String> getAllItemCodes() throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             itemDAO.setSession(session);
             session.beginTransaction();
 

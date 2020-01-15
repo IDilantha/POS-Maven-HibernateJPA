@@ -1,12 +1,11 @@
 package business.custom.impl;
 
 import business.custom.CustomerBO;
-import business.exception.AlreadyExistsInOrderException;
 import dao.DAOFactory;
 import dao.DAOTypes;
 import dao.custom.CustomerDAO;
 import dao.custom.OrderDAO;
-import db.HibernateUtil;
+import db.JPAUtil;
 import dto.CustomerDTO;
 import entity.Customer;
 import javafx.scene.control.Alert;
@@ -22,7 +21,7 @@ public class CustomerBOImpl implements CustomerBO {
 
     @Override
     public void saveCustomer(CustomerDTO customer) throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             customerDAO.setSession(session);
             session.beginTransaction();
             customerDAO.save(new Customer(customer.getId(), customer.getName(), customer.getAddress()));
@@ -33,7 +32,7 @@ public class CustomerBOImpl implements CustomerBO {
 
     @Override
     public void updateCustomer(CustomerDTO customer) throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             customerDAO.setSession(session);
             session.beginTransaction();
             customerDAO.update(new Customer(customer.getId(), customer.getName(), customer.getAddress()));
@@ -43,7 +42,7 @@ public class CustomerBOImpl implements CustomerBO {
 
     @Override
     public void deleteCustomer(String customerId) throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             customerDAO.setSession(session);
             orderDAO.setSession(session);
             session.beginTransaction();
@@ -60,7 +59,7 @@ public class CustomerBOImpl implements CustomerBO {
 
     @Override
     public List<CustomerDTO> findAllCustomers() throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             customerDAO.setSession(session);
             session.beginTransaction();
 
@@ -76,7 +75,7 @@ public class CustomerBOImpl implements CustomerBO {
 
     @Override
     public String getLastCustomerId() throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             customerDAO.setSession(session);
             session.beginTransaction();
 
@@ -88,7 +87,7 @@ public class CustomerBOImpl implements CustomerBO {
 
     @Override
     public CustomerDTO findCustomer(String customerId) throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             customerDAO.setSession(session);
             session.beginTransaction();
 
@@ -100,7 +99,7 @@ public class CustomerBOImpl implements CustomerBO {
 
     @Override
     public List<String> getAllCustomerIDs() throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             customerDAO.setSession(session);
             session.beginTransaction();
 

@@ -4,7 +4,7 @@ import business.custom.OrderBO;
 import dao.DAOFactory;
 import dao.DAOTypes;
 import dao.custom.*;
-import db.HibernateUtil;
+import db.JPAUtil;
 import dto.OrderDTO;
 import dto.OrderDTO2;
 import dto.OrderDetailDTO;
@@ -29,7 +29,7 @@ public class OrderBOImpl implements OrderBO {
 
     @Override
     public int getLastOrderId() throws Exception {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = JPAUtil.getSessionFactory().openSession()) {
             orderDAO.setSession(session);
             session.beginTransaction();
 
@@ -41,7 +41,7 @@ public class OrderBOImpl implements OrderBO {
 
     @Override
     public void placeOrder(OrderDTO order) throws Exception {
-       try (Session session = HibernateUtil.getSessionFactory().openSession()){
+       try (Session session = JPAUtil.getSessionFactory().openSession()){
            orderDAO.setSession(session);
            orderDetailDAO.setSession(session);
            customerDAO.setSession(session);
@@ -64,7 +64,7 @@ public class OrderBOImpl implements OrderBO {
 
     @Override
     public List<OrderDTO2> getOrderInfo() throws Exception {
-        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try(Session session = JPAUtil.getSessionFactory().openSession()) {
             queryDAO.setSession(session);
             session.beginTransaction();
 

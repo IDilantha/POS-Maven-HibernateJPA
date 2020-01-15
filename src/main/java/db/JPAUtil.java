@@ -17,7 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-public class HibernateUtil {
+public class JPAUtil {
     private static String username;
     private static String password;
     private static String db;
