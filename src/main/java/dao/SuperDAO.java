@@ -2,8 +2,10 @@ package dao;
 
 import org.hibernate.Session;
 
+import javax.persistence.EntityManager;
+
 public interface SuperDAO {
 
-    void setSession(Session session);
+    void setEntityManager(EntityManager entityManager);
 
 }
