@@ -12,8 +12,8 @@ import entity.CustomEntity;
 import entity.Item;
 import entity.Order;
 import entity.OrderDetail;
-import org.hibernate.Session;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,52 +29,51 @@ public class OrderBOImpl implements OrderBO {
 
     @Override
     public int getLastOrderId() throws Exception {
-        try (Session session = JPAUtil.getSessionFactory().openSession()) {
-            orderDAO.setSession(session);
-            session.beginTransaction();
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+        orderDAO.setEntityManager(entityManager);
+        entityManager.getTransaction().begin();
 
-            int lastOrderId = orderDAO.getLastOrderId();
-            session.getTransaction().commit();
-            return lastOrderId;
-        }
+        int lastOrderId = orderDAO.getLastOrderId();
+        entityManager.getTransaction().commit();
+        entityManager.close();
+        return lastOrderId;
     }
 
     @Override
     public void placeOrder(OrderDTO order) throws Exception {
-       try (Session session = JPAUtil.getSessionFactory().openSession()){
-           orderDAO.setSession(session);
-           orderDetailDAO.setSession(session);
-           customerDAO.setSession(session);
-           itemDAO.setSession(session);
-           session.beginTransaction();
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+        orderDAO.setEntityManager(entityManager);
+        orderDetailDAO.setEntityManager(entityManager);
+        customerDAO.setEntityManager(entityManager);
+        itemDAO.setEntityManager(entityManager);
+        entityManager.getTransaction().begin();
 
-           int oId = order.getId();
-           orderDAO.save(new Order(oId, new java.sql.Date(new Date().getTime()), customerDAO.find(order.getCustomerId())));
+        int oId = order.getId();
+        orderDAO.save(new Order(oId, new java.sql.Date(new Date().getTime()), customerDAO.find(order.getCustomerId())));
 
-           for (OrderDetailDTO orderDetail : order.getOrderDetails()) {
-               orderDetailDAO.save(new OrderDetail(oId, orderDetail.getCode(), orderDetail.getQty(), orderDetail.getUnitPrice()));
+        for (OrderDetailDTO orderDetail : order.getOrderDetails()) {
+            orderDetailDAO.save(new OrderDetail(oId, orderDetail.getCode(), orderDetail.getQty(), orderDetail.getUnitPrice()));
 
-               Item item = itemDAO.find(orderDetail.getCode());
-               item.setQtyOnHand(item.getQtyOnHand() - orderDetail.getQty());
-               itemDAO.update(item);
-           }
-           session.getTransaction().commit();
-       }
+            Item item = itemDAO.find(orderDetail.getCode());
+            item.setQtyOnHand(item.getQtyOnHand() - orderDetail.getQty());
+            itemDAO.update(item);
+        }
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
 
     @Override
     public List<OrderDTO2> getOrderInfo() throws Exception {
-        try(Session session = JPAUtil.getSessionFactory().openSession()) {
-            queryDAO.setSession(session);
-            session.beginTransaction();
+        EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+        queryDAO.setEntityManager(entityManager);
+        entityManager.getTransaction().begin();
 
-            List<CustomEntity> ordersInfo = queryDAO.getOrdersInfo();
-            List<OrderDTO2> dtos = new ArrayList<>();
-            for (CustomEntity info : ordersInfo) {
-                dtos.add(new OrderDTO2(info.getOrderId(),info.getOrderDate(),info.getCustomerId(),info.getCustomerName(),info.getOrderTotal()));
-            }
-            session.getTransaction().commit();
-            return dtos;
+        List<CustomEntity> ordersInfo = queryDAO.getOrdersInfo();
+        List<OrderDTO2> dtos = new ArrayList<>();
+        for (CustomEntity info : ordersInfo) {
+            dtos.add(new OrderDTO2(info.getOrderId(), info.getOrderDate(), info.getCustomerId(), info.getCustomerName(), info.getOrderTotal()));
         }
+        entityManager.getTransaction().commit();
+        return dtos;
     }
 }
